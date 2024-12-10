@@ -29,7 +29,7 @@ model = Sequential([
     Dense(4, activation='softmax')  # Multi-class classification
 ])
 
-# Define class names
+# Define class name
 class_names = ['Melanoma', 'Basal Cell Carcinoma',
                'Squamous Cell Carcinoma', 'Benign']
 
