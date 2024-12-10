@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Skin Cancer Detection</title>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='style.css') }}"
+    />
+  </head>
+  <body>
+    <div class="container">
+      <h1>Skin Cancer Detection</h1>
+
+      <!-- Image upload form -->
+      <form id="image-form" enctype="multipart/form-data">
+        <input type="file" name="image" id="image" accept="image/*" required />
+        <button type="submit">Upload Image</button>
+      </form>
+
+      <div id="prediction-result">
+        <p id="prediction">Prediction: <span id="class-label">N/A</span></p>
+        <p id="confidence">
+          Confidence: <span id="confidence-value">N/A</span>
+        </p>
+        <img
+          id="uploaded-image"
+          src=""
+          alt="Uploaded Image"
+          style="max-width: 300px; display: none"
+        />
+      </div>
+    </div>
+
+    <script>
+      const form = document.getElementById("image-form");
+      form.addEventListener("submit", function (event) {
+        event.preventDefault();
+        const formData = new FormData();
+        const imageFile = document.getElementById("image").files[0];
+        formData.append("image", imageFile);
+
+        // Send the image to the backend
+        fetch("/upload", {
+          method: "POST",
+          body: formData,
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            if (data.error) {
+              alert(data.error);
+              return;
+            }
+
+            // Show uploaded image and prediction result
+            const imageUrl = data.image_url;
+            const classLabel = data.prediction;
+            const confidence = data.confidence;
+
+            document.getElementById("uploaded-image").src = imageUrl;
+            document.getElementById("uploaded-image").style.display = "inline";
+            document.getElementById("class-label").textContent = classLabel;
+            document.getElementById("confidence-value").textContent =
+              confidence;
+          })
+          .catch((error) => {
+            alert("An error occurred while processing the image.");
+            console.error(error);
+          });
+      });
+    </script>
+  </body>
+</html>
